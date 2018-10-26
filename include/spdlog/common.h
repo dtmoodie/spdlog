@@ -49,6 +49,16 @@
 #define SPDLOG_DEPRECATED
 #endif
 
+#define SPDLOG_NVCC_COMPAT 0
+#ifdef __NVCC__
+#include <cuda_runtime_api.h>
+#if CUDART_VERSION < 9000
+#undef SPDLOG_NVCC_COMPAT
+#define SPDLOG_NVCC_COMPAT 1
+#endif
+#endif
+
+
 #include "fmt/fmt.h"
 
 namespace spdlog {
@@ -103,17 +113,23 @@ inline const char *to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
+
+std::unordered_map<std::string, level_enum> init_name_to_level()
+{
+    std::unordered_map<std::string, level_enum> out;
+    out[level_names[0]] = level::trace;
+    out[level_names[1]] = level::debug;
+    out[level_names[2]] = level::info;
+    out[level_names[3]] = level::warn;
+    out[level_names[4]] = level::err;
+    out[level_names[5]] = level::critical;
+    out[level_names[6]] = level::off;
+    return out;
+}
+
 inline spdlog::level::level_enum from_str(const std::string &name)
 {
-    static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
-        {{level_names[0], level::trace},                               // trace
-            {level_names[1], level::debug},                            // debug
-            {level_names[2], level::info},                             // info
-            {level_names[3], level::warn},                             // warn
-            {level_names[4], level::err},                              // err
-            {level_names[5], level::critical},                         // critical
-            {level_names[6], level::off}};                             // off
-
+    static std::unordered_map<std::string, level_enum> name_to_level = init_name_to_level();
     auto lvl_it = name_to_level.find(name);
     return lvl_it != name_to_level.end() ? lvl_it->second : level::off;
 }
