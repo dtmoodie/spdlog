@@ -303,7 +303,12 @@ class z_formatter SPDLOG_FINAL : public flag_formatter
 public:
     const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
 
-    z_formatter() = default;
+    z_formatter():
+        _last_update(std::chrono::seconds(0)),
+        _offset_minutes(0)
+    {
+
+    }
     z_formatter(const z_formatter &) = delete;
     z_formatter &operator=(const z_formatter &) = delete;
 
@@ -335,8 +340,8 @@ public:
     }
 
 private:
-    log_clock::time_point _last_update{std::chrono::seconds(0)};
-    int _offset_minutes{0};
+    log_clock::time_point _last_update;
+    int _offset_minutes;
     std::mutex _mutex;
 
     int get_cached_offset(const log_msg &msg, const std::tm &tm_time)
