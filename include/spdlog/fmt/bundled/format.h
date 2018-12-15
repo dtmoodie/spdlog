@@ -2438,6 +2438,9 @@ class basic_writer {
     std::size_t padding;
     F f;
 
+    padded_int_writer(const string_view& pre, const char_type f, std::size_t pad, const F& f_):
+        prefix(pre), fill(f), padding(pad), f(f_){}
+
     template <typename It>
     void operator()(It &&it) const {
       if (prefix.size() != 0)
@@ -2469,7 +2472,7 @@ class basic_writer {
     align_spec as = spec;
     if (spec.align() == ALIGN_DEFAULT)
       as.align_ = ALIGN_RIGHT;
-    write_padded(size, as, padded_int_writer<F>{prefix, fill, padding, f});
+    write_padded(size, as, padded_int_writer<F>(prefix, fill, padding, f));
   }
 
   // Writes a decimal integer.
@@ -2566,6 +2569,9 @@ class basic_writer {
       unsigned_type abs_value;
       unsigned num_digits;
 
+      bin_writer(const unsigned_type abs, const unsigned nd):
+          abs_value(abs), num_digits(nd){}
+
       template <typename It>
       void operator()(It &&it) const {
         it = internal::format_uint<BITS>(it, abs_value, num_digits);
@@ -2579,7 +2585,7 @@ class basic_writer {
       }
       unsigned num_digits = count_digits<1>();
       writer.write_int(num_digits, get_prefix(), spec,
-                       bin_writer<1>{abs_value, num_digits});
+                       bin_writer<1>(abs_value, num_digits));
     }
 
     void on_oct() {
@@ -2591,7 +2597,7 @@ class basic_writer {
         prefix[prefix_size++] = '0';
       }
       writer.write_int(num_digits, get_prefix(), spec,
-                       bin_writer<3>{abs_value, num_digits});
+                       bin_writer<3>(abs_value, num_digits));
     }
 
     enum { SEP_SIZE = 1 };
@@ -3629,7 +3635,7 @@ struct udl_arg {
 
   template <typename T>
   named_arg<T, Char> operator=(T &&value) const {
-    return {str, std::forward<T>(value)};
+    return (str, std::forward<T>(value));
   }
 };
 

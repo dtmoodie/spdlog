@@ -114,16 +114,22 @@ inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
     return short_level_names[l];
 }
 
+inline std::unordered_map<std::string, level_enum> makeNameToLevel()
+{
+    std::unordered_map<std::string, level_enum> name_to_level;
+    name_to_level[level_names[0]] = level::trace;
+    name_to_level[level_names[1]] = level::debug;
+    name_to_level[level_names[2]] = level::info;
+    name_to_level[level_names[3]] = level::warn;
+    name_to_level[level_names[4]] = level::err;
+    name_to_level[level_names[5]] = level::critical;
+    name_to_level[level_names[6]] = level::off;
+    return name_to_level;
+}
+
 inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
 {
-    static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
-        {{level_names[0], level::trace},                               // trace
-            {level_names[1], level::debug},                            // debug
-            {level_names[2], level::info},                             // info
-            {level_names[3], level::warn},                             // warn
-            {level_names[4], level::err},                              // err
-            {level_names[5], level::critical},                         // critical
-            {level_names[6], level::off}};                             // off
+    static std::unordered_map<std::string, level_enum> name_to_level = makeNameToLevel();
 
     auto lvl_it = name_to_level.find(name);
     return lvl_it != name_to_level.end() ? lvl_it->second : level::off;

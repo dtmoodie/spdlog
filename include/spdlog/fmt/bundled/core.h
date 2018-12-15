@@ -1488,7 +1488,7 @@ FMT_API void vprint(wstring_view format_str, wformat_args args);
  */
 template <typename... Args>
 inline void print(string_view format_str, const Args & ... args) {
-  format_arg_store<format_context, Args...> as{args...};
+  format_arg_store<format_context, Args...> as(args...);
   vprint(format_str, as);
 }
 

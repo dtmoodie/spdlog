@@ -164,7 +164,7 @@ protected:
     std::vector<sink_ptr> sinks_;
     spdlog::level_t level_{spdlog::logger::default_level()};
     spdlog::level_t flush_level_{level::off};
-    log_err_handler err_handler_{[this](const std::string &msg) { this->default_err_handler_(msg); }};
+    log_err_handler err_handler_;
     std::atomic<time_t> last_err_time_{0};
     std::atomic<size_t> msg_counter_{1};
 };

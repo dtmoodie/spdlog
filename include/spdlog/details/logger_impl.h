@@ -26,6 +26,7 @@ template<typename It>
 inline spdlog::logger::logger(std::string logger_name, It begin, It end)
     : name_(std::move(logger_name))
     , sinks_(begin, end)
+    , err_handler_([this](const std::string &msg) { this->default_err_handler_(msg); })
 {
 }
 
