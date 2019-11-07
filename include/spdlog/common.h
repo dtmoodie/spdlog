@@ -58,7 +58,6 @@
 #endif
 #endif
 
-
 #include "fmt/fmt.h"
 
 namespace spdlog {
@@ -114,7 +113,7 @@ inline const char *to_short_str(spdlog::level::level_enum l)
     return short_level_names[l];
 }
 
-std::unordered_map<std::string, level_enum> init_name_to_level()
+inline std::unordered_map<std::string, level_enum> init_name_to_level()
 {
     std::unordered_map<std::string, level_enum> out;
     out[level_names[0]] = level::trace;
